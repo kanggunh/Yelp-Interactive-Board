@@ -1,9 +1,29 @@
 <script>
     import { onMount } from 'svelte'; 
     import * as d3 from 'd3';
-    import main_graph from './Graph.svelte';
+    import My_Viz from './Graph.svelte';
 
     let data = []
+
+    onMount(async () => {
+        const res = await fetch(
+            'us_asian_restaurants.csv',
+        );
+        const csv = await res.text();
+        await d3.csvParse(csv, (d) => {
+            data.push({
+                name: d["name"],
+                state: d["state"],
+                stars: d["stars"],
+                category: d["category"]
+            });
+        });
+        data = data;
+    });
+
+    console.log('hello, ');
+    console.log('csv file here:', data);
+
 
 
 
@@ -11,7 +31,7 @@
 
 <main>
     <h1>Yelp Interactive Board</h1>
-
+    <My_Viz {data}/>
 </main>
 
 <style>
@@ -25,7 +45,6 @@
       --color-bg-1: hsla(0, 0%, 0%, 0.2);
       --color-shadow-1: hsl(0, 0%, 96%);
       background-color: #F8F8F0;
-
     }
   
     *,
