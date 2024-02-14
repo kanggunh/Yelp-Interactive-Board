@@ -2,6 +2,7 @@
     import { onMount } from 'svelte'; 
     import * as d3 from 'd3';
     import My_Viz from './Graph.svelte';
+    import USMap from './USMap.svelte';
 
     let data = []
 
@@ -30,8 +31,8 @@
 </script>
 
 <main>
-    <h1>Yelp Interactive Board</h1>
-    <My_Viz {data}/>
+    <h1>Asians, Know Your States!</h1>
+    <USMap />
 </main>
 
 <style>
@@ -60,13 +61,14 @@
       font-family: 'Nunito', sans-serif;
       font-weight: 300;
       line-height: 2;
-      font-size: 24px;
+      font-size: 12px;
       color: var(--color-text);
     }
   
     h1 {
-      font-size: 2em;
+      font-size: 8em;
       font-weight: 300;
       line-height: 2;
     }
+
 </style>
