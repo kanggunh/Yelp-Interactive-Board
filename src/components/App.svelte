@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte'; 
     import * as d3 from 'd3';
-    import My_Viz from './Graph.svelte';
+    //import USMap from './Graph.svelte';
     import USMap from './USMap.svelte';
 
     let data = []

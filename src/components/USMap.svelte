@@ -55,7 +55,43 @@
   'Wisconsin': 'WI',
   'Wyoming': 'WY',
 };
-  
+
+const stateData = {
+  'California': [10, 20, 30, 40, 50],
+};
+
+let previouslyClickedState = null;
+
+function drawGraphForState(stateName) {
+  const data = stateData[stateName];
+  const width = 400;
+  const height = 200;
+  const xScale = d3.scaleBand().rangeRound([0, width]).padding(0.1);
+  const yScale = d3.scaleLinear().rangeRound([height, 0]);
+
+  let svg = d3.select("#graph").select("svg");
+  if (svg.empty()) {
+    svg = d3.select("#graph").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+  } else {
+    svg.selectAll("*").remove();
+  }
+
+  xScale.domain(data.map((x, i) => i));
+  yScale.domain([0, d3.max(data)]);
+
+  svg.selectAll(".bar")
+     .data(data)
+     .enter().append("rect")
+     .attr("class", "bar")
+     .attr("x", (x, i) => xScale(i))
+     .attr("y", x => yScale(x))
+     .attr("width", xScale.bandwidth())
+     .attr("height", x => height - yScale(x))
+     .attr('fill', 'orange');
+}
+
     onMount(async () => {
       const mapData = await d3.json('/us-states.json');
       const states = feature(mapData, mapData.objects.states).features;
@@ -79,18 +115,20 @@
         .attr('d', path)
         .attr('fill', '#d3d3d3')
         .style('stroke-width', "20px")
-        .on('mouseover', function(event, d) {
-            d3.select(this).transition().duration(300).style('fill', 'orange');
-            tooltip.transition().duration(200).style('opacity', .9);
-            tooltip.html(d.properties.name)
-                .style('left', (event.pageX) + 'px')
-                .style('top', (event.pageY - 28) + 'px');
-            console.log(d.properties.name);
+        .on('click', function(event, d) {
+          if (previouslyClickedState) {
+            svg.select(`#${previouslyClickedState}`).attr('fill', '#d3d3d3');
+          }
+          previouslyClickedState = `state-${d.properties.name.replace(/\s/g, '-')}`;
+          d3.select(this).attr('fill', 'orange').attr('id', previouslyClickedState);
+
+          drawGraphForState(d.properties.name);
+          tooltip.transition().duration(200).style('opacity', .9);
+          tooltip.html(d.properties.name)
+              .style('left', (event.pageX) + 'px')
+              .style('top', (event.pageY - 28) + 'px');
+          console.log(d.properties.name);
         })
-            .on('mouseout', function() {
-                tooltip.transition().duration(500).style('opacity', 0);
-                d3.select(this).transition().duration(300).style('fill', '#d3d3d3');
-        });
   
         const tooltip = d3.select('body').append('div')
             .attr('class', 'tooltip')
@@ -115,30 +153,4 @@
   </script>
   
   <div id="map"></div>
-  
-  <style>
-    .state {
-      stroke: #000;
-      stroke-linejoin: round;
-      stroke-width: 10px;
-    }
-    .state-label {
-      font-size: 4px;
-      pointer-events: none;
-    }
-
-    .tooltip {
-        position: absolute;
-        text-align: center;
-        width: 120px;
-        height: auto;
-        padding: 2px;
-        font: 12px sans-serif;
-        background: lightsteelblue;
-        border: 0px;
-        border-radius: 8px;
-        pointer-events: none;
-        opacity: 0;
-    }
-  </style>
   
