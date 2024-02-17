@@ -100,16 +100,6 @@ function drawGraphForState(stateName) {
     var yAxis = svg.append("g")
       .transition().duration(1000)
       .call(d3.axisLeft(y));
-
-    svg.selectAll("mybar")
-      .data(values)
-      .enter()
-      .append("rect")
-        .attr("x", (d, i) => x(cuisineTypes[i]))
-        .attr("y", d => y(d))
-        .attr("width", x.bandwidth())
-        .attr("height", d => height - y(d))
-        .attr("fill", "#69b3a2");
   }
 
     onMount(async () => {
@@ -117,12 +107,12 @@ function drawGraphForState(stateName) {
       const states = feature(mapData, mapData.objects.states).features;
   
       const svg = d3.select('#map').append('svg')
-        .attr('viewBox', '0 0 960 600')
+        .attr('viewBox', '0 0 900 600')
         .style('width', '75%')
         .style('height', 'auto');
   
       const projection = d3.geoAlbersUsa()
-        .scale(1300)
+        .scale(1200)
         .translate([480, 300]);
   
       const path = d3.geoPath()
