@@ -57,40 +57,60 @@
 };
 
 const stateData = {
-  'California': [10, 20, 30, 40, 50],
+  'California': {'Greek':10, 'Korean':20, 'Chinese':30, 'American':40, 'Italian':50},
+  'New York': {'Greek':15, 'Korean':25, 'Chinese':35, 'American':45, 'Italian':55}
 };
 
 let previouslyClickedState = null;
 
 function drawGraphForState(stateName) {
-  const data = stateData[stateName];
-  const width = 400;
-  const height = 200;
-  const xScale = d3.scaleBand().rangeRound([0, width]).padding(0.1);
-  const yScale = d3.scaleLinear().rangeRound([height, 0]);
+    const data = stateData[stateName];
+    const cuisineTypes = Object.keys(data);
+    const values = Object.values(data);
 
-  let svg = d3.select("#graph").select("svg");
-  if (svg.empty()) {
-    svg = d3.select("#graph").append("svg")
-            .attr("width", width)
-            .attr("height", height);
-  } else {
-    svg.selectAll("*").remove();
+    d3.select('#graph').selectAll('*').remove();
+
+    const margin = {top: 20, right: 30, bottom: 40, left: 90},
+          width = 460 - margin.left - margin.right,
+          height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select("#graph")
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+    const x = d3.scaleBand()
+      .range([ 0, width ])
+      .domain(cuisineTypes)
+      .padding(0.2);
+    var xAxis = svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .transition().duration(1000)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+        .attr("transform", "translate(-10,0)rotate(-45)")
+        .style("text-anchor", "end");
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(values)])
+      .range([ height, 0]);
+    var yAxis = svg.append("g")
+      .transition().duration(1000)
+      .call(d3.axisLeft(y));
+
+    svg.selectAll("mybar")
+      .data(values)
+      .enter()
+      .append("rect")
+        .attr("x", (d, i) => x(cuisineTypes[i]))
+        .attr("y", d => y(d))
+        .attr("width", x.bandwidth())
+        .attr("height", d => height - y(d))
+        .attr("fill", "#69b3a2");
   }
-
-  xScale.domain(data.map((x, i) => i));
-  yScale.domain([0, d3.max(data)]);
-
-  svg.selectAll(".bar")
-     .data(data)
-     .enter().append("rect")
-     .attr("class", "bar")
-     .attr("x", (x, i) => xScale(i))
-     .attr("y", x => yScale(x))
-     .attr("width", xScale.bandwidth())
-     .attr("height", x => height - yScale(x))
-     .attr('fill', 'orange');
-}
 
     onMount(async () => {
       const mapData = await d3.json('/us-states.json');
