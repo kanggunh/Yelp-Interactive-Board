@@ -3,6 +3,60 @@
   import { onMount } from 'svelte'; 
   import * as d3 from 'd3';
 
+  const abbreviationToName = {
+  'AL': 'Alabama',
+  'AK': 'Alaska',
+  'AZ': 'Arizona',
+  'AR': 'Arkansas',
+  'CA': 'California',
+  'CO': 'Colorado',
+  'CT': 'Connecticut',
+  'DE': 'Delaware',
+  'FL': 'Florida',
+  'GA': 'Georgia',
+  'HI': 'Hawaii',
+  'ID': 'Idaho',
+  'IL': 'Illinois',
+  'IN': 'Indiana',
+  'IA': 'Iowa',
+  'KS': 'Kansas',
+  'KY': 'Kentucky',
+  'LA': 'Louisiana',
+  'ME': 'Maine',
+  'MD': 'Maryland',
+  'MA': 'Massachusetts',
+  'MI': 'Michigan',
+  'MN': 'Minnesota',
+  'MS': 'Mississippi',
+  'MO': 'Missouri',
+  'MT': 'Montana',
+  'NE': 'Nebraska',
+  'NV': 'Nevada',
+  'NH': 'New Hampshire',
+  'NJ': 'New Jersey',
+  'NM': 'New Mexico',
+  'NY': 'New York',
+  'NC': 'North Carolina',
+  'ND': 'North Dakota',
+  'OH': 'Ohio',
+  'OK': 'Oklahoma',
+  'OR': 'Oregon',
+  'PA': 'Pennsylvania',
+  'RI': 'Rhode Island',
+  'SC': 'South Carolina',
+  'SD': 'South Dakota',
+  'TN': 'Tennessee',
+  'TX': 'Texas',
+  'UT': 'Utah',
+  'VT': 'Vermont',
+  'VA': 'Virginia',
+  'WA': 'Washington',
+  'WV': 'West Virginia',
+  'WI': 'Wisconsin',
+  'WY': 'Wyoming'
+};
+
+
   let width= 1000;
   let height= 520;
   const margin = { top: 20, right: 20, bottom: 20, left: 180 };
@@ -11,6 +65,25 @@
 
   let stateData = [];
   let selected_state = 'CA';
+  let tooltip;
+  
+  function handleMouseOver(event, d) {
+    tooltip
+      .transition().duration(200)
+      .style('opacity', 1)
+      .text(`${d.category}: ${d[selected_state]}`);
+  }
+
+  function handleMouseMove(event, d) {
+    tooltip
+      .attr('x', event.clientX - margin.left + 200)
+      .attr('y', event.clientY - margin.top -150)
+      .raise();
+  }
+
+  function handleMouseOut() {
+    tooltip.transition().duration(100).style('opacity', 0);
+  }
   
   onMount(async () => {
     const res = await fetch(
@@ -21,6 +94,7 @@
       stateData.push(data);
     });
     stateData = stateData;
+    tooltip = d3.select('#tooltip');
   });
 
   function update(update_state) {
@@ -67,7 +141,7 @@
 
 </script>
 
-<h2>{selected_state} Distrubution</h2>
+<h2> Restaurant distrubution in {abbreviationToName[selected_state]}</h2>
 
 <div class="btn-group">
   <button on:click={select_AZ}>AZ</button>
@@ -97,6 +171,7 @@
         </text>
       </g>
     {/each}
+    
     {#each stateData as d}
       <text
         text-anchor="end"
@@ -107,14 +182,22 @@
         {d.category}
       </text>
       <rect
+        role="presentation"
         x="0"
         y={yScale(d.category)}
         width={xScale(d[selected_state])}
         height={yScale.bandwidth()}
         fill="#F9746F"
+        on:mouseover="{(event) => handleMouseOver(event, d)}"
+        on:mousemove="{(event) => handleMouseMove(event, d)}"
+        on:mouseout="{handleMouseOut}"
+        on:focus="{(event) => handleMouseOver(event, d)}"
+        on:blur="{handleMouseOut}"
       />
     {/each}
+    
   </g>
+  <text id="tooltip" x={0} y={0} style="opacity: 1; pointer-events: fill; transition: opacity 0.3s; font-size: 12px;" transform={`translate(${margin.left}px, ${margin.top}px)`}></text>
 </svg>
 
 <style>
