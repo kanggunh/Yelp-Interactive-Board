@@ -1,4 +1,3 @@
-
 <script>
   import { onMount } from 'svelte'; 
   import * as d3 from 'd3';
@@ -76,8 +75,8 @@
 
   function handleMouseMove(event, d) {
     tooltip
-      .attr('x', event.clientX - margin.left + 200)
-      .attr('y', event.clientY - margin.top -150)
+      .attr('x', 880)
+      .attr('y', 110)
       .raise();
   }
 
