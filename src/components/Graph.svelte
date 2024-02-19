@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte'; 
   import * as d3 from 'd3';
+  import Tooltip from "./Tooltip.svelte";
 
   const abbreviationToName = {
   'AL': 'Alabama',
@@ -64,7 +65,7 @@
 
   let stateData = [];
   let selected_state = 'CA';
-  let tooltip;
+  let hovered=null;
   
   function handleMouseOver(event, d) {
     tooltip
@@ -93,7 +94,6 @@
       stateData.push(data);
     });
     stateData = stateData;
-    tooltip = d3.select('#tooltip');
   });
 
   function update(update_state) {
@@ -160,44 +160,45 @@
   <button on:click={select_TN}>TN</button>
 </div>
 
-<svg {width} {height}>
-  <g transform={`translate(${margin.left},${margin.top})`}>
-    {#each xScale.ticks() as tickValue}
-      <g transform={`translate(${xScale(tickValue)},0)`}>
-        <line y2={innerHeight} stroke="#E8EDEA" />
-        <text text-anchor="middle" dy=".7em" y={innerHeight + 3}>
-          {tickValue}
+<div class='chart-container' bind:clientWidth={width} on:mouseout={()=>{hovered=null}}>
+  <svg {width} {height}>
+    <g transform={`translate(${margin.left},${margin.top})`}>
+      {#each xScale.ticks() as tickValue}
+        <g transform={`translate(${xScale(tickValue)},0)`}>
+          <line y2={innerHeight} stroke="#E8EDEA" />
+          <text text-anchor="middle" dy=".7em" y={innerHeight + 3}>
+            {tickValue}
+          </text>
+        </g>
+      {/each}
+      
+      {#each stateData as d}
+        <text
+          text-anchor="end"
+          x="-3"
+          dy=".3em"
+          y={yScale(d.category) + yScale.bandwidth() / 2}
+        >
+          {d.category}
         </text>
-      </g>
-    {/each}
-    
-    {#each stateData as d}
-      <text
-        text-anchor="end"
-        x="-3"
-        dy=".3em"
-        y={yScale(d.category) + yScale.bandwidth() / 2}
-      >
-        {d.category}
-      </text>
-      <rect
-        role="presentation"
-        x="0"
-        y={yScale(d.category)}
-        width={xScale(d[selected_state])}
-        height={yScale.bandwidth()}
-        fill="#F9746F"
-        on:mouseover="{(event) => handleMouseOver(event, d)}"
-        on:mousemove="{(event) => handleMouseMove(event, d)}"
-        on:mouseout="{handleMouseOut}"
-        on:focus="{(event) => handleMouseOver(event, d)}"
-        on:blur="{handleMouseOut}"
-      />
-    {/each}
-    
-  </g>
-  <text id="tooltip" x={0} y={0} style="opacity: 1; pointer-events: fill; transition: opacity 0.3s; font-size: 12px;" transform={`translate(${margin.left}px, ${margin.top}px)`}></text>
-</svg>
+        <rect
+          role="presentation"
+          x="0"
+          y={hovered? hovered == d ? yScale(d.category)-7:yScale(d.category):yScale(d.category)}
+          width={xScale(d[selected_state])}
+          height={hovered ? hovered == d ?yScale.bandwidth()+14:yScale.bandwidth():yScale.bandwidth()}
+          opacity={hovered ? hovered == d ? "1" : ".3" : "1"}
+          fill="#F9746F"
+          on:mouseover={() => {hovered=d}}
+        >{console.log(d)}</rect>
+      {/each}    
+    </g>
+  </svg>
+  {#if hovered}
+    <Tooltip data = {hovered} {xScale} {yScale} {selected_state}/>
+  {/if}
+</div>
+
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
