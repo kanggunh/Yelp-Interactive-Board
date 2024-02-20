@@ -2,14 +2,12 @@
     import { onMount } from 'svelte'; 
     import * as d3 from 'd3';
     import Graph from '../components/Graph.svelte';
-    import USMap from './USMap.svelte';
 </script>
 
 
 <main>
   <h1>Yelp Cuisine Exploration</h1>
   <Graph />
-  <!-- <USMap /> -->
 </main>
 
 <style>
@@ -36,6 +34,7 @@
     }
   
     h1 {
+      margin-top: -25px;
       font-size: 5em;
       font-weight: 200;
       line-height: 2;

@@ -59,31 +59,13 @@
 
   let width= 1000;
   let height= 520;
-  const margin = { top: 20, right: 20, bottom: 20, left: 180 };
+  const margin = { top: 20, right: 20, bottom: 20, left: 100 };
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
 
   let stateData = [];
   let selected_state = 'CA';
   let hovered=null;
-  
-  function handleMouseOver(event, d) {
-    tooltip
-      .transition().duration(200)
-      .style('opacity', 1)
-      .text(`${d.category}: ${d[selected_state]}`);
-  }
-
-  function handleMouseMove(event, d) {
-    tooltip
-      .attr('x', 880)
-      .attr('y', 110)
-      .raise();
-  }
-
-  function handleMouseOut() {
-    tooltip.transition().duration(100).style('opacity', 0);
-  }
   
   onMount(async () => {
     const res = await fetch(
@@ -118,17 +100,6 @@
   
   console.log('hello, ');
   console.log('csv file here:', stateData);
-
-  // $: xDomain = stateData.map((d) => d.category);
-  // $: yDomain = stateData.map((d) => +d[selected_state]);
-
-  // $: xScale = d3.scaleBand()
-  //   .domain(xDomain)
-  //   .range([margin.left, width - margin.right])
-
-  // $: yScale = d3.scaleLinear()
-  //   .domain([0, Math.max.apply(null, yDomain)])
-	// 	.range([margin.top, height - margin.bottom]);
 
   $: xDomain = stateData.map((d) => d.category);
   $: yDomain = stateData.map((d) => +d[selected_state]);
@@ -194,15 +165,26 @@
       {/each}    
     </g>
   </svg>
+
   {#if hovered}
     <Tooltip data = {hovered} {xScale} {yScale} {selected_state}/>
   {/if}
+
 </div>
 
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
   
+  .chart-container {
+    position: relative;
+    width: 1000px;
+    height: 520px;
+    z-index: 15;
+    margin-left: auto;
+    margin-top: auto;
+    margin-right: auto;
+  }
   
   button {
     background-color: #FCFCFC;
@@ -214,6 +196,10 @@
     padding: 10px 24px;
     margin-bottom: 10px;
   }
+
+  h2 {
+    margin-top: -75px;
+  }
   
   button:hover {
     background-color: #FFE2E1; 
@@ -221,7 +207,7 @@
     }
 
   rect {
-    transition: all 700ms ease;
+    transition: all 500ms ease;
 
   }
 </style>
