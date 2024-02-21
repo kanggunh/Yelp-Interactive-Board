@@ -59,7 +59,7 @@
 
   let width= 980;
   let height= 495;
-  const margin = { top: 20, right: 20, bottom: 20, left: 100 };
+  const margin = { top: 20, right: 20, bottom: 20, left: 125 };
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
 
@@ -190,7 +190,7 @@
   .x-axis {
     position: relative;
     width: 1000px;
-    margin-left: auto;
+    margin-left: 35px;
     margin-top: auto;
     margin-right: auto;
     font-size: 20px;
