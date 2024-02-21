@@ -28,13 +28,13 @@
   
     h1 {
       font-size: 15px;
-      font-weight: 100;
+      font-weight: 600;
       margin-bottom: 0.1rem;
     }
 
     p {
         font-size: 10px;
-        font-weight: 100;
+        font-weight: 600;
         margin-bottom: 0.3rem;
     }
 

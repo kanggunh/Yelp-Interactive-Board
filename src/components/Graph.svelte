@@ -57,8 +57,8 @@
 };
 
 
-  let width= 1000;
-  let height= 520;
+  let width= 980;
+  let height= 495;
   const margin = { top: 20, right: 20, bottom: 20, left: 100 };
   const innerHeight = height - margin.top - margin.bottom;
   const innerWidth = width - margin.left - margin.right;
@@ -110,7 +110,6 @@
     .range([0, innerWidth]);
 
 </script>
-
 <h2> Restaurant distrubution in {abbreviationToName[selected_state]}</h2>
 
 <div class="btn-group">
@@ -152,7 +151,7 @@
         >
           {d.category}
         </text>
-        <rect
+        <rect class='bars'
           role="presentation"
           x="0"
           y={hovered? hovered == d ? yScale(d.category)-7:yScale(d.category):yScale(d.category)}
@@ -162,10 +161,12 @@
           fill="#F9746F"
           on:mouseover={() => {hovered=d}}
         >{console.log(d)}</rect>
-      {/each}    
+      {/each}
     </g>
   </svg>
 
+  <p class='x-axis'>count</p>
+  
   {#if hovered}
     <Tooltip data = {hovered} {xScale} {yScale} {selected_state}/>
   {/if}
@@ -174,7 +175,7 @@
 
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
   
   .chart-container {
     position: relative;
@@ -185,29 +186,44 @@
     margin-top: auto;
     margin-right: auto;
   }
+
+  .x-axis {
+    position: relative;
+    width: 1000px;
+    margin-left: auto;
+    margin-top: auto;
+    margin-right: auto;
+    font-size: 20px;
+  }
   
   button {
     background-color: #FCFCFC;
-    font-family: "Protest Strike", sans-serif;
+    font-family: "Roboto Serif", serif;
     color: black;
     border: 2px solid #1B1717; 
     transition-duration: 0.45s;
     border-radius: 15px;
-    padding: 10px 24px;
-    margin-bottom: 10px;
+    padding: 8px 15px;
+    margin-top: 25px;
+    margin-bottom: 5px;
+    font-weight: 600;
   }
 
   h2 {
-    margin-top: -75px;
+    margin-top: -65px;
+    font-weight: 600;
   }
   
   button:hover {
     background-color: #FFE2E1; 
     color: white;
-    }
+  }
 
   rect {
-    transition: all 500ms ease;
+    transition: all 450ms ease;
+  }
 
+  text {
+    font-weight: 700;
   }
 </style>
